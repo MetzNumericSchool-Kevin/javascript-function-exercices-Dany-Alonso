@@ -51,3 +51,29 @@ function calculerPrixPotion(id, inventaire, quantite = 1) {
 // Exemple d'utilisation : calculer le prix de 3 potions de soin
 const prixTotal = calculerPrixPotion("potion_soin", inventaire, 3);
 console.log(`Le prix total pour 3 potions est de ${prixTotal} 🪙.`);
+
+
+// Exercice 3 - Fabrication de potion
+
+/**
+ * Créer une nouvelle potion et l'ajoute dans l'inventaire.
+ * 
+ * @param {string} id - L'identifiant unique de la potion.
+ * @param {number} [prix=10] - Le prix de la potion (par défaut 10).
+ * @param {number} [stock = 1] - Le stock disponible de la potion (par défaut 1).
+ * @returns {object} - Renvoi un objet (içi une potion).
+ */
+function createPotion(id , prix = 10, stock = 1) {
+    // Création de la potion dans une constante dans laquel sera stocké le nouvel objet (la potion) avec ses paramètres
+    const potion = {
+      id: id,
+      prix: prix,
+      stock: stock
+    };
+    console.log(`Nouvelle potion créée : ${id}, Prix : ${prix}, Stock : ${stock}`);
+    return potion;
+}
+createPotion("potion de force");
+createPotion("potion de mana", 5, 2);
+
+
