@@ -89,7 +89,7 @@ createPotion("potion_mana", 5, 2);
  * @param {object} - Renvoi un objet (potion).
  * @returns {Array} - L'inventaire mis à jour.
  */
-function addPotionInventaire(inventaire, potion) {
+function addPotionInventaire(inventaire, potion,) {
     const index = inventaire.findIndex(pot => pot.id === potion.id); // Fonction fléchée
     // function compareId(pot){                                       // Fonction standard
     //   return pot.id === potion.id;
@@ -121,4 +121,35 @@ function addPotionInventaire(inventaire, potion) {
 inventaire = addPotionInventaire(inventaire, createPotion("potion_xp"));
 inventaire = addPotionInventaire(inventaire, { id: 'potion_force', prix: 15, stock: 3 });
 inventaire = addPotionInventaire(inventaire, { id: 'potion_mana', prix: 13, stock: 3 });
+console.log(inventaire); 
+
+
+// Exercice 5 - Cherche moi les potions qui...
+
+/**
+ * Fais un tri dans le tableau inventaire des potions en stock
+ * 
+ * @param {Array} inventaire - La liste des potions disponibles.
+ * @returns {Array}          - Inventaire filtrer
+ */
+function potionInStock(inventaire){  
+  return inventaire.filter(potion => potion.stock > 0);  
+}
+let stockPotion = potionInStock(inventaire);
+console.log(stockPotion);
+
+
+/**
+ * Fais un tri dans le tableau inventaire des potions avec un stock à 0
+ * 
+ * @param {Array} inventaire - La liste des potions disponibles.
+ * @returns {Array}          - Inventaire filtrer
+ */
+function potionOutOfStock(inventaire){  
+  return inventaire.filter(potion => potion.stock = 0);  
+}
+let zeroStockPotion = potionOutOfStock(inventaire);
+console.log(zeroStockPotion);
+
 console.log(inventaire);
+
