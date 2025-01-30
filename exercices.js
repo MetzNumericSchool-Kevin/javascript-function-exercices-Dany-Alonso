@@ -76,8 +76,8 @@ function createPotion(id , prix = 10, stock = 1) {
     console.log(`Nouvelle potion créée : ${id}, Prix : ${prix}, Stock : ${stock}`);
     return newPotion;
 }
-createPotion("potion_force");
-createPotion("potion_mana", 5, 2);
+// createPotion("potion_force");
+// createPotion("potion_mana", 5, 2);
 
 
 // Exercice 4 - Ajout de nouvelles potions dans l'inventaire
@@ -100,11 +100,11 @@ function addPotionInventaire(inventaire, potion,) {
       // Si la potion existe déjà, met à jour le prix et le stock
       inventaire[index].prix = potion.prix;
       inventaire[index].stock += potion.stock;
-      console.log(`Potion ${potion.id} mise à jour : Prix = ${potion.prix}, Nouveau stock = ${inventaire[index].stock}`);
+      console.log(`Potion "${potion.id}" mise à jour : Prix = ${potion.prix}, Nouveau stock = ${inventaire[index].stock}`);
     } else {
       // Si la potion n'existe pas, l'ajoute à l'inventaire
       inventaire.push(potion);
-      console.log(`Potion ${potion.id} ajoutée avec succès : Prix = ${potion.prix}, Stock = ${potion.stock}`);
+      console.log(`Potion "${potion.id}" ajoutée avec succès : Prix = ${potion.prix}, Stock = ${potion.stock}`);
     }
   
     // Tri de l'inventaire du plus cher au moins cher
@@ -118,10 +118,10 @@ function addPotionInventaire(inventaire, potion,) {
     
   }
 
-inventaire = addPotionInventaire(inventaire, createPotion("potion_xp"));
-inventaire = addPotionInventaire(inventaire, { id: 'potion_force', prix: 15, stock: 3 });
-inventaire = addPotionInventaire(inventaire, { id: 'potion_mana', prix: 13, stock: 3 });
-console.log(inventaire); 
+// inventaire = addPotionInventaire(inventaire, createPotion("potion_xp"));
+// inventaire = addPotionInventaire(inventaire, { id: 'potion_force', prix: 15, stock: 3 });
+// inventaire = addPotionInventaire(inventaire, { id: 'potion_mana', prix: 13, stock: 3 });
+// console.log(inventaire); 
 
 
 // Exercice 5 - Cherche moi les potions qui...
@@ -153,3 +153,78 @@ console.log(zeroStockPotion);
 
 console.log(inventaire);
 
+
+// Exercice 6 - Allons faire de la cueillette, nous avons besoin de plus de potions !
+
+/**
+ * vérifie les ingrédients fournis avec ceux du manuel de fabrication pour créer ou non la potion demandé puis l'ajoute à l'inventaire. Si la potion n'existe pas, l'ajoute à l'inventaire et ajoute ça recette au manuel de fabrication.
+ * 
+ * @param {string} id - L'identifiant unique de la potion.
+ * @param {string[]} ingredients - Les ingrédients fournis pour fabriquer la potion.
+ * @param {number} [prix=10] - Le prix de la potion (par défaut 10).
+ * @param {number} [stock = 1] - Le stock disponible de la potion (par défaut 1).
+ * @returns {Object|Error} - Retourne un objet représentant la potion si les ingrédients sont complets, sinon une erreur.
+ */
+function newCreatePotion(id , ingredients = [], prix = 10, stock = 1) {
+  // Stock l'index des objets du manuel de fabrication en variable pour pouvoir filtrer dedans.
+  const recipe = manuel_de_fabrication[id]
+
+  // Si l'id n'est pas dans le manuel, l'ajoute à l'inventaire et au manuel de recettes
+  if (!recipe) {
+    manuel_de_fabrication[id] = {
+      ingredients,
+      temps_de_fabrication: 3, // Temps par défaut en secondes
+    };
+    console.log(`Nouvelle recette "${id}" ajoutée au manuel.`, manuel_de_fabrication[id]);
+
+    return {
+      id,
+      prix,
+      stock,
+    };
+  }
+
+  // Stock dans un tableau les éléments manquants grâce à un filtre dans les ingrédients du manuel de fabrication qui retourne une valeur true si l'ingrédients n'est pas présent dans le tableau de paramètre ingrédients[] de la fonction.
+  const ingredientsManquants = recipe.ingredients.filter(ingredient => !ingredients.includes(ingredient));
+
+  // Si la taille du tableau des ingrédients manquants est strictement supérieur à 0.
+  if (ingredientsManquants.length > 0) {
+
+    // Renvoi un message d'erreur avec l'id de la potion et les ingrédients manquants .join() créait et renvoi en string toutes les valeurs du tableau.
+    return new Error(`Il manque des ingrédients à la potion "${id}" : ${ingredientsManquants.join(", ")}`);
+  }
+
+  // Si tout va bien, retourne un objet potion
+  return {
+    id,
+    prix,
+    stock,
+  };
+}
+
+// Test de création et ajout de potions
+
+// Déclare les caractéristiques d'une potion à créer dans un tableau d'objets.
+const potionsATester = [
+  { id: "potion_soin", ingredients: ["eau_de_source", "ecaille_de_dragon"], prix: 15, stock: 3 },
+  { id: "potion_soin", ingredients: ["eau_de_source", "ecaille_de_dragon", "poudre_de_diamant"], prix: 20, stock: 2 },
+  { id: "potion_force", ingredients: ["sang_de_licorne", "racine_d_or", "larmes_de_phoenix"], prix: 25, stock: 4 },
+  { id: "potion_force", ingredients: ["sang_de_licorne", "racine_d_or"], prix: 30, stock: 1 },
+];
+
+// Test de la fabrication et ajout des potions dans l'inventaire
+potionsATester.forEach(({ id, ingredients, prix, stock }) => {
+  const resultatCreation = newCreatePotion(id, ingredients, prix, stock);
+
+  // Si la potion renvoi une instance d'erreur.
+  if (resultatCreation instanceof Error) {
+    // Affiche le message d'erreur correspond.
+    console.error(resultatCreation.message);
+  // Sinon l'ajoute à l'inventaire.
+  } else {
+    addPotionInventaire(inventaire, resultatCreation);
+  }
+});
+
+console.log("Inventaire final :", inventaire);
+console.log("Manuel de fabrication mis à jour :", manuel_de_fabrication);
